@@ -1,2 +1,3 @@
-jsonlines
+python-dotenv
 transformers
+jsonlines

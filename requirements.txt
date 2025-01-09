@@ -1,3 +1,4 @@
+accelerate
 python-dotenv
 torch
 transformers

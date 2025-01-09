@@ -1,4 +1,7 @@
-from agentrec.datasets import Agent
+from agentrec.datasets import Agent, Generator
+
+from typing import Any
+import jsonlines
 
 class PromptPool:
     """
@@ -31,17 +34,20 @@ class PromptPool:
 
     def generate(
         self,
+        model: Any,
         per_agent: Optional[int | list[int]] = None,
         total: Optional[int] = None,
     ):
         """
         Generates the specified number of training samples and stores them into
         the class, so that they can be retrieved or saved to file. An argument
-        must be specified, either `per_agent` or `total`, in order to geerate
+        must be specified, either `per_agent` or `total`, in order to generate
         training samples. If neither or both are specified, then a `ValueError`
         is thrown.
 
         Args:
+            model: A class implementing __call__ to inference a LLM given an
+                   untokenized OpenAI-like context.
             per_agent: The number of training samples that should be generated
                        for each agent.
             total: The number of training samples that should be generated for
@@ -50,7 +56,27 @@ class PromptPool:
                    for each agent. If this number is not cleanly divisible by
                    the number of agents, a best-effort approach is made.
         """
-        pass
+        if self.agents is None:
+            raise ValueError("A list of agents must be specified first")
+        elif per_agent is None and total is None:
+            raise ValueError("A number of training samples to generate must be \
+                              specified in order to generate")
+        elif per_agent is not None and total is not None:
+            raise ValueError("Only one parameter can be set which specifies the \
+                              number of training samples to generate.")
+
+        per_agent = per_agent if per_agent is not None else total // len(self.agents)
+        generator = Generator(model, self.agents)
+        
+        for agent in self.agents:
+            name      = agent.name
+            agent_gen = generator(name)
+            n         = 0
+
+            while n < per_agent:
+                prompt  = next(agent_gen)
+                n      += 1
+                self.pool.append(prompt)
 
     def save(
         self,

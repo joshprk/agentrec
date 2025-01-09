@@ -1,5 +1,6 @@
 accelerate
 python-dotenv
+sentence_transformers
 torch
 transformers
 jsonlines

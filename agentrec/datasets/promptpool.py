@@ -1,6 +1,6 @@
 from agentrec.datasets import Agent, Generator
 
-from typing import Any
+from typing import Any, Optional
 import jsonlines
 
 class PromptPool:

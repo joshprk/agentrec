@@ -94,7 +94,14 @@ class PromptPool:
             agent_path: The file path where the agent metadata is stored
             path: The file path where the agent prompts are stored
         """
-        pass
+        agents = [agent.to_jsonl() for agent in self.agents]
+        with jsonlines.open(agent_path, mode="w") as agent_file:
+            agent_file.write_all(agents)
+            agent_file.close()
+
+        with jsonlines.open(path, mode="w") as prompt_file:
+            prompt_file.write_all(self.pool)
+            prompt_file.close()
 
     def load(
         self,
@@ -109,4 +116,13 @@ class PromptPool:
             agent_path: The file path where the agent metadata is stored
             path: The file path where the agent prompts are stored
         """
-        pass
+        self.agents = []
+        with jsonlines.open(agent_path) as agent_file:
+            for agent in agent_file:
+                self.agents.append(agent)
+            agent_file.close()
+
+        with jsonlines.open(path) as prompt_file:
+            for prompt in prompt_file:
+                self.pool.append(prompt)
+            prompt_file.close()

@@ -4,6 +4,7 @@ from agentrec.datasets import Agent, Generator
 
 from typing import Any, Optional
 from pathlib import Path
+import random
 
 class PromptPool:
     """
@@ -81,6 +82,32 @@ class PromptPool:
                 prompt  = next(agent_gen)
                 n      += 1
                 self.pool.append(prompt)
+
+    def shuffle(self, seed: Optional[int] = None):
+        """
+        Shuffles the `PromptPool` randomly. A seed can be provided to perform
+        this operation deterministically.
+
+        Args:
+            seed: An optional random seed which allows deterministic shuffling
+                  shuffling when specified.
+        """
+        return random.Random(seed).shuffle(self.pool)
+
+    def split(self, n: int):
+        """
+        Splits the `PromptPool` by popping the last `n` training samples. Note
+        that this does not check for safety, meaning that the user must make
+        sure that there are enough training samples available in the pool to
+        begin with.
+
+        Args:
+            n: The number of training samples to remove from the `PromptPool`
+               and return.
+        """
+        popped    = self.pool[n:]
+        self.pool = self.pool[:n]
+        return popped
 
     def save(
         self,

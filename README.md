@@ -16,7 +16,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+A LLM is also necessary, which must allow the input and output of an OpenAI
+formatted context. More details about implementing this are in the documentation.
+
 A synthetic dataset can be generated using the `agentrec.datasets.PromptPool`
 class. A list of agent names must be given, which can have optional
 descriptions and examples tied to them. This dataset can then be saved through
-serializing the `PromptPool`. A usage example is given in `test.py`.
+serializing the `PromptPool`. A usage example is given in `test.py`. Note that
+a Huggingface API key must be inserted in `.env`.

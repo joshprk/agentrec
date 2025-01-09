@@ -1,3 +1,4 @@
 python-dotenv
+torch
 transformers
 jsonlines

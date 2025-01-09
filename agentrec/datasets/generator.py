@@ -67,12 +67,24 @@ class Generator:
             self.generators[agent.name] = generator
 
     def get_agents(self):
+        """
+        Returns the list of agents that this generator was initialized with.
+        """
         return self.agents
 
     def __len__(self):
+        """
+        Returns the number of agents that this generator was initialized with.
+        """
         return len(self.agents)
 
     def __call__(self, agent: str):
+        """
+        Returns an `AgentGenerator` for the given `agent`.
+
+        Args:
+            agent: The agent which the returned `AgentGenerator` should handle.
+        """
         if agent in self.generators:
             return self.generators[agent]
         else:
@@ -132,6 +144,11 @@ class AgentGenerator:
         self.batch = []
 
     def next_batch(self):
+        """
+        An internal function which inferences a LLM to generate the next batch
+        of prompts to be given through the iterator. This can be called
+        directly in order to receive a list of prompts.
+        """
         if self.batch is not None:
             return
 
@@ -199,6 +216,12 @@ class AgentGenerator:
         return processed
 
     def __next__(self):
+        """
+        Returns a single prompt in the form of a dictionary containing the keys
+        `agent_name` and `content`. Do not call this in an iterator as it will
+        block forever as it will never raise `StopIteration`. Instead, use the
+        `next` function.
+        """
         while self.batch is None:
             self.batch = self.next_batch()
 

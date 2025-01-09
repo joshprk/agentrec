@@ -72,7 +72,7 @@ class PromptPool:
 
         per_agent = per_agent if per_agent is not None else total // len(self.agents)
         generator = Generator(model, self.agents)
-        
+
         for agent in self.agents:
             name      = agent.name
             agent_gen = generator(name)
@@ -108,6 +108,37 @@ class PromptPool:
         popped    = self.pool[n:]
         self.pool = self.pool[:n]
         return popped
+
+    def uniform(self, n: int):
+        """
+        Uniformly splits the `PromptPool`. This function will attempt to return
+        a list of prompts where each agent has the same number of training
+        samples out of a list of n training samples. It is recommended to
+        shuffle the pool afterwards.
+
+        Args:
+            n: The number of training samples to remove from the `PromptPool`
+               and return. The sum of all prompts of all agents will equal to
+               this argument.
+        """
+        per_agent = n // len(self.agents)
+        prompts = {}
+        for agent in self.agents:
+            name = agent.name
+            prompts[name] = []
+            idx = 0
+            while (len(prompts[name]) < per_agent) and (idx < len(self.pool)):
+                prompt = self.pool[idx]
+                if prompt["agent_name"] == name:
+                    prompts[name].append(self.pool.pop(idx))
+                else:
+                    idx += 1
+
+        pool = []
+        for agent in prompts:
+            pool += prompts[agent]
+
+        return pool
 
     def save(
         self,

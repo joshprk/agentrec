@@ -13,6 +13,13 @@ AGENTS = [
     "Math Agent",
 ]
 
+DEVICE = "auto"
+MAX_LENGTH = 1024
+TEMPERATURE = 0.6
+TOP_P = 0.95
+TOP_K = 50
+REPETITION_PENALTY = 1.2
+
 class Llama3:
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
@@ -20,7 +27,7 @@ class Llama3:
         self.model = pipeline(task="text-generation",
                               model=MODEL_ID,
                               torch_dtype=torch.bfloat16,
-                              device_map="cuda:3",
+                              device_map=DEVICE,
                               tokenizer=self.tokenizer)
 
     def __call__(self, context):
@@ -28,13 +35,13 @@ class Llama3:
             context,
             num_return_sequences=1,
             pad_token_id=self.tokenizer.eos_token_id,
-            max_length=1024,
+            max_length=MAX_LENGTH,
             return_full_text=False,
-            temperature=0.6,
+            temperature=TEMPERATURE,
             do_sample=True,
-            top_p=0.95,
-            top_k=50,
-            repetition_penalty=1.2,
+            top_p=TOP_P,
+            top_k=TOP_K,
+            repetition_penalty=REPETITION_PENALTY,
             truncation=True,
         )[0]["generated_text"]
 

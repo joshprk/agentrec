@@ -1,7 +1,9 @@
+import jsonlines
+
 from agentrec.datasets import Agent, Generator
 
 from typing import Any, Optional
-import jsonlines
+from pathlib import Path
 
 class PromptPool:
     """
@@ -31,6 +33,8 @@ class PromptPool:
         for idx, agent in enumerate(agents):
             if isinstance(agent, str):
                 agents[idx] = Agent(agent)
+
+        self.agents = agents
 
     def generate(
         self,
@@ -94,6 +98,9 @@ class PromptPool:
             agent_path: The file path where the agent metadata is stored
             path: The file path where the agent prompts are stored
         """
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(agent_path).parent.mkdir(parents=True, exist_ok=True)
+
         agents = [agent.to_jsonl() for agent in self.agents]
         with jsonlines.open(agent_path, mode="w") as agent_file:
             agent_file.write_all(agents)

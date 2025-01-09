@@ -149,7 +149,7 @@ class AgentGenerator:
         of prompts to be given through the iterator. This can be called
         directly in order to receive a list of prompts.
         """
-        if self.batch is not None:
+        if len(self.batch) > 0:
             return
 
         if not self.store_context:
@@ -187,7 +187,7 @@ class AgentGenerator:
         self.context.append({"role": "system", "content": system_prompt})
 
         # Expect OpenAI-compatible context list
-        res = self.model(self.context)[-1]
+        res = self.model(self.context)[-1]["content"]
         batch = []
 
         try:
@@ -222,7 +222,7 @@ class AgentGenerator:
         block forever as it will never raise `StopIteration`. Instead, use the
         `next` function.
         """
-        while self.batch is None:
+        while not len(self.batch) > 0:
             self.batch = self.next_batch()
 
         return self.batch.pop()

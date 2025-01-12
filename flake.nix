@@ -1,6 +1,10 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    mach-nix = {
+      url = "github:davhau/mach-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -13,7 +17,11 @@
     getPkgs = system: import nixpkgs {inherit system;};
   in {
     packages = forAllSystems (system: {
-      agentrec = {};
+      agentrec = mach-nix.buildPythonPackage {
+        pname = "agentrec";
+        src = ./agentrec;
+        requirements = builtins.readFile ./requirements.txt;
+      };
 
       default = self.packages.${system}.agentrec;
     });

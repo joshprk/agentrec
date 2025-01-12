@@ -17,9 +17,9 @@ class PromptPool:
     """
     def __init__(self):
         self.pool = []
-        self.agents = None
+        self.agents = []
 
-    def set(self, agents: list[Agent | str]):
+    def set(self, agents: list[Agent]):
         """
         Sets the list of agents that the prompt pool should generate from. Note
         that if a pool was already generated before calling this function, that
@@ -28,20 +28,13 @@ class PromptPool:
         Args:
             agents: A list of agents which the prompt pool should generate from
         """
-        if self.agents is not None:
-            self.pool = []
-
-        for idx, agent in enumerate(agents):
-            if isinstance(agent, str):
-                agents[idx] = Agent(agent)
-
         self.agents = agents
+        self.pool = []
 
     def generate(
         self,
         model: Any,
-        per_agent: Optional[int | list[int]] = None,
-        total: Optional[int] = None,
+        per_agent: int,
     ):
         """
         Generates the specified number of training samples and stores them into
@@ -61,14 +54,8 @@ class PromptPool:
                    for each agent. If this number is not cleanly divisible by
                    the number of agents, a best-effort approach is made.
         """
-        if self.agents is None:
+        if len(self.agents) > 0:
             raise ValueError("A list of agents must be specified first")
-        elif per_agent is None and total is None:
-            raise ValueError("A number of training samples to generate must be \
-                              specified in order to generate")
-        elif per_agent is not None and total is not None:
-            raise ValueError("Only one parameter can be set which specifies the \
-                              number of training samples to generate.")
 
         per_agent = per_agent if per_agent is not None else total // len(self.agents)
         generator = Generator(model, self.agents)

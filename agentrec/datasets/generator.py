@@ -49,8 +49,8 @@ class Generator:
         self,
         model: Any,
         agents: Agent | list[Agent],
-        batch_size: Optional[int] = BATCH_SIZE,
-        store_context: Optional[bool] = STORE_CONTEXT,
+        batch_size: int = BATCH_SIZE,
+        store_context: bool = STORE_CONTEXT,
     ):
         if isinstance(agents, Agent):
             agents = [agents]
@@ -85,10 +85,7 @@ class Generator:
         Args:
             agent: The agent which the returned `AgentGenerator` should handle.
         """
-        if agent in self.generators:
-            return self.generators[agent]
-        else:
-            return None
+        return self.generators[agent]
 
 class AgentGenerator:
     """
@@ -123,9 +120,9 @@ class AgentGenerator:
         model: Any,
         agent: str,
         agent_desc: Optional[str] = None,
-        agent_examples: Optional[list[str] | list[dict]] = None,
-        batch_size: Optional[int] = BATCH_SIZE,
-        store_context: Optional[bool] = STORE_CONTEXT,
+        agent_examples: list[str | dict] = [],
+        batch_size: int = BATCH_SIZE,
+        store_context: bool = STORE_CONTEXT,
     ):
         self.model = model
         self.agent = agent
@@ -134,11 +131,11 @@ class AgentGenerator:
         self.batch_size = batch_size
         self.store_context = store_context
 
-        if isinstance(agent_examples, dict):
-            for example in agent_examples:
+        for example in agent_examples:
+            if isinstance(example, str):
+                self.agent_examples.append(example)
+            elif isinstance(example, dict):
                 self.agent_examples.append(example["content"])
-        else:
-            self.agent_examples = agent_examples
 
         self.context = []
         self.batch = []
@@ -149,8 +146,8 @@ class AgentGenerator:
         of prompts to be given through the iterator. This can be called
         directly in order to receive a list of prompts.
         """
-        if len(self.batch) > 0:
-            return
+        if len(self.batch) > 0: 
+            return self.batch
 
         if not self.store_context:
             self.context = []
@@ -163,7 +160,7 @@ class AgentGenerator:
             agent_data += \
                 f"Here is a description of the agent: {self.agent_desc}\n\n"
 
-        if self.agent_examples is not None:
+        if len(self.agent_examples) > 0:
             examples = """
             Below are a few example prompts. Note that this is not a
             representative set of prompts and serves only as a few examples for
@@ -174,9 +171,7 @@ class AgentGenerator:
                 examples += f"""
                 {{
                     "agent_name": {self.agent},
-                    "content": {example}
-                }}\n
-                """
+                    "content": {example} }}\n """
 
             agent_data += examples
 

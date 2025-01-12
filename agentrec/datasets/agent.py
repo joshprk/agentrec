@@ -1,5 +1,3 @@
-import jsonlines
-
 from dataclasses import dataclass
 from typing import Optional
 
@@ -10,16 +8,16 @@ class Agent:
     """
     name: str
     description: Optional[str] = None
-    examples: Optional[list[str] | list[dict]] = None
+    examples: list[str | dict] = []
 
     @staticmethod
     def from_jsonl(data: dict):
         """
         Returns an `Agent` that describes the given jsonlines serialization.
         """
-        return Agent(name=data.name,
-                     description=data.description,
-                     examples=data.examples)
+        return Agent(name=data["name"],
+                     description=data["description"],
+                     examples=data["examples"])
 
     def to_jsonl(self):
         """

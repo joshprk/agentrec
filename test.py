@@ -8,7 +8,7 @@ import math
 
 MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
 AGENTS = [
-    Agent("Biology Agent"),
+    Agent("Tech Support Agent"),
     Agent("Cooking Agent"),
     Agent("Math Agent"),
     Agent("Gaming Agent"),
@@ -18,8 +18,8 @@ AGENTS = [
     Agent("Fitness Agent"),
 ]
 
-DEVICE = "cuda:4"
-MAX_NEW_TOKENS = 2048
+DEVICE = "auto"
+MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.6
 TOP_P = 0.95
 TOP_K = 50
@@ -62,7 +62,7 @@ def main():
     model = Llama3()
     pool  = PromptPool()
     pool.set(AGENTS)
-    pool.generate(model, per_agent=50, batch_size=50, progress=True)
+    pool.generate(model, per_agent=200, batch_size=50, progress=True)
 
     pool.save(path="./data/prompts.jsonl",
               agent_path="./data/agents.jsonl")
@@ -94,4 +94,4 @@ def main2():
 
 if __name__ == "__main__":
     load_dotenv()
-    main2()
+    main()

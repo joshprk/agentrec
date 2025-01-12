@@ -4,7 +4,7 @@ import jsonlines
 from typing import Any, Optional
 
 BATCH_SIZE = 50
-STORE_CONTEXT = True
+CONTEXT_SIZE = 50
 SYSTEM_PROMPT = """
 You are a synthetic dataset generator specializing in creating diverse and \
 realistic prompts for Large Language Models (LLMs). Your task is to generate \
@@ -50,7 +50,7 @@ class Generator:
         model: Any,
         agents: Agent | list[Agent],
         batch_size: int = BATCH_SIZE,
-        store_context: bool = STORE_CONTEXT,
+        store_context: int = CONTEXT_SIZE,
     ):
         if isinstance(agents, Agent):
             agents = [agents]
@@ -122,7 +122,7 @@ class AgentGenerator:
         agent_desc: Optional[str] = None,
         agent_examples: list[str | dict] = [],
         batch_size: int = BATCH_SIZE,
-        store_context: bool = STORE_CONTEXT,
+        store_context: int = CONTEXT_SIZE,
     ):
         self.model = model
         self.agent = agent
@@ -149,7 +149,10 @@ class AgentGenerator:
         if len(self.batch) > 0: 
             return self.batch
 
-        if not self.store_context:
+        if self.store_context > 0:
+            while len(self.context) > self.store_context:
+                self.context.pop(0)
+        else:
             self.context = []
 
         agent_data = f"""
@@ -175,15 +178,21 @@ class AgentGenerator:
 
             agent_data += examples
 
+        system_prompt = SYSTEM_PROMPT + agent_data
         instruction = f"Generate {self.batch_size} prompts for the given agent. \
                         Do not output anything else other than valid JSON."
-        system_prompt = SYSTEM_PROMPT + agent_data + instruction
-
-        self.context.append({"role": "system", "content": system_prompt})
+        user_prompt = [{"role": "user", "content": instruction}]
+        model_context = [{"role": "system", "content": system_prompt}] + \
+                        self.context + \
+                        user_prompt
 
         # Expect OpenAI-compatible context list
-        res = self.model(self.context)[-1]["content"]
+        response = self.model(model_context)[-1]
+        res = response["content"]
         batch = []
+
+        self.context.extend(user_prompt)
+        self.context.append(response)
 
         try:
             while True:

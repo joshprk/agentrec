@@ -73,6 +73,10 @@ class PromptPool:
             while n < per_agent:
                 prompt  = next(agent_gen)
                 n      += 1
+
+                if progress:
+                    print("[AgentRec]", str(n), "/", str(per_agent))
+
                 self.pool.append(prompt)
 
     def shuffle(self, seed: Optional[int] = None):

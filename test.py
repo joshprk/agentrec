@@ -2,15 +2,18 @@ from dotenv import load_dotenv
 from transformers import AutoTokenizer, pipeline
 import torch
 
-from agentrec.datasets import PromptPool
-
-import os
+from agentrec.datasets import Agent, PromptPool
 
 MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
 AGENTS = [
-    "Biology Agent",
-    "Cooking Agent",
-    "Math Agent",
+    Agent("Biology Agent"),
+    Agent("Cooking Agent"),
+    Agent("Math Agent"),
+    Agent("Gaming Agent"),
+    Agent("Therapy Agent"),
+    Agent("Reading Agent"),
+    Agent("Health Agent"),
+    Agent("Fitness Agent"),
 ]
 
 DEVICE = "auto"
@@ -19,11 +22,12 @@ TEMPERATURE = 0.6
 TOP_P = 0.95
 TOP_K = 50
 REPETITION_PENALTY = 1.2
+CHAT_TEMPLATE = "{% for message in messages %}{% if message['role'] == 'user' %}{{ ' ' }}{% endif %}{{ message['content'] }}{% if not loop.last %}{{ ' ' }}{% endif %}{% endfor %}{{ eos_token }}"
 
 class Llama3:
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-        self.tokenizer.chat_template = "{% for message in messages %}{% if message['role'] == 'user' %}{{ ' ' }}{% endif %}{{ message['content'] }}{% if not loop.last %}{{ ' ' }}{% endif %}{% endfor %}{{ eos_token }}"
+        self.tokenizer.chat_template = CHAT_TEMPLATE
         self.model = pipeline(task="text-generation",
                               model=MODEL_ID,
                               torch_dtype=torch.bfloat16,
@@ -43,14 +47,12 @@ class Llama3:
             top_k=TOP_K,
             repetition_penalty=REPETITION_PENALTY,
             truncation=True,
-        )[0]["generated_text"]
+            )[0]["generated_text"] # pyright: ignore
 
         context.append({
             "role": "assistant",
             "content": text,
         })
-
-        print(text)
 
         return context
 
@@ -58,12 +60,10 @@ def main():
     model = Llama3()
     pool  = PromptPool()
     pool.set(AGENTS)
-    pool.generate(model, per_agent=1)
+    pool.generate(model, per_agent=50)
 
-    pool.save(
-        path="./data/prompts.jsonl",
-        agent_path="./data/agents.jsonl",
-    )
+    pool.save(path="./data/prompts.jsonl",
+              agent_path="./data/agents.jsonl")
 
 
 if __name__ == "__main__":

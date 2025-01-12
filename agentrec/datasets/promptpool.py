@@ -35,6 +35,7 @@ class PromptPool:
         self,
         model: Any,
         per_agent: int,
+        batch_size: Optional[int],
     ):
         """
         Generates the specified number of training samples and stores them into
@@ -58,7 +59,7 @@ class PromptPool:
             raise ValueError("A list of agents must be specified first")
 
         per_agent = per_agent if per_agent is not None else total // len(self.agents)
-        generator = Generator(model, self.agents)
+        generator = Generator(model, self.agents) if batch_size is None else Generator(model, self.agents, batch_size=batch_size)
 
         for agent in self.agents:
             name      = agent.name

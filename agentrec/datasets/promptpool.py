@@ -36,6 +36,7 @@ class PromptPool:
         model: Any,
         per_agent: int,
         batch_size: Optional[int],
+        progress: bool = False,
     ):
         """
         Generates the specified number of training samples and stores them into
@@ -55,7 +56,7 @@ class PromptPool:
                    for each agent. If this number is not cleanly divisible by
                    the number of agents, a best-effort approach is made.
         """
-        if len(self.agents) > 0:
+        if not len(self.agents) > 0:
             raise ValueError("A list of agents must be specified first")
 
         per_agent = per_agent if per_agent is not None else total // len(self.agents)
@@ -65,6 +66,9 @@ class PromptPool:
             name      = agent.name
             agent_gen = generator(name)
             n         = 0
+
+            if progress:
+                print("[AgentRec] Generating prompts for", name)
 
             while n < per_agent:
                 prompt  = next(agent_gen)

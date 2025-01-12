@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 from transformers import AutoTokenizer, pipeline
-import torch
 
 from agentrec.datasets import Agent, PromptPool
 
@@ -16,8 +15,8 @@ AGENTS = [
     Agent("Fitness Agent"),
 ]
 
-DEVICE = "auto"
-MAX_LENGTH = 1024
+DEVICE = "cuda:4"
+MAX_NEW_TOKENS = 2048
 TEMPERATURE = 0.6
 TOP_P = 0.95
 TOP_K = 50
@@ -30,7 +29,7 @@ class Llama3:
         self.tokenizer.chat_template = CHAT_TEMPLATE
         self.model = pipeline(task="text-generation",
                               model=MODEL_ID,
-                              torch_dtype=torch.bfloat16,
+                              torch_dtype="bfloat16",
                               device_map=DEVICE,
                               tokenizer=self.tokenizer)
 
@@ -39,7 +38,7 @@ class Llama3:
             context,
             num_return_sequences=1,
             pad_token_id=self.tokenizer.eos_token_id,
-            max_length=MAX_LENGTH,
+            max_new_tokens=MAX_NEW_TOKENS,
             return_full_text=False,
             temperature=TEMPERATURE,
             do_sample=True,
@@ -60,7 +59,7 @@ def main():
     model = Llama3()
     pool  = PromptPool()
     pool.set(AGENTS)
-    pool.generate(model, per_agent=50)
+    pool.generate(model, per_agent=50, batch_size=50, progress=True)
 
     pool.save(path="./data/prompts.jsonl",
               agent_path="./data/agents.jsonl")

@@ -8,7 +8,7 @@ class Agent:
     """
     name: str
     description: Optional[str] = None
-    examples: list[str | dict] = []
+    examples: Optional[list[str | dict]] = None
 
     @staticmethod
     def from_jsonl(data: dict):

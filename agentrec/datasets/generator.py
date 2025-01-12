@@ -61,7 +61,7 @@ class Generator:
             generator = AgentGenerator(model,
                                        agent=agent.name,
                                        agent_desc=agent.description,
-                                       agent_examples=agent.examples,
+                                       agent_examples=agent.examples if agent.examples is not None else [],
                                        batch_size=batch_size,
                                        store_context=store_context)
             self.generators[agent.name] = generator

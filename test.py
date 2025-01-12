@@ -2,6 +2,9 @@ from dotenv import load_dotenv
 from transformers import AutoTokenizer, pipeline
 
 from agentrec.datasets import Agent, PromptPool
+from agentrec.models import SBERTAgentRec
+
+import math
 
 MODEL_ID = "meta-llama/Llama-3.1-8B-Instruct"
 AGENTS = [
@@ -64,7 +67,31 @@ def main():
     pool.save(path="./data/prompts.jsonl",
               agent_path="./data/agents.jsonl")
 
+def main2():
+    pool = PromptPool()
+    pool.load(path="./data/prompts.jsonl",
+              agent_path="./data/agents.jsonl")
+
+    classifier = SBERTAgentRec("all-mpnet-base-v2")
+    classifier.fit(pool.pool)
+    
+    while stdin := input("> "):
+        raw = classifier.transform(stdin)
+        scores = {}
+
+        for agent in raw:
+            scores[agent] = sum(raw[agent]) / len(raw[agent])
+
+        best = ""
+        best_score = -math.inf
+
+        for agent in scores:
+            if scores[agent] > best_score:
+                best = agent
+                best_score = scores[agent]
+
+        print("Selected Agent:", best)
 
 if __name__ == "__main__":
     load_dotenv()
-    main()
+    main2()

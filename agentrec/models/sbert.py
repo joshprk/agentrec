@@ -11,12 +11,12 @@ class SBERTAgentRec:
         samples = {}
 
         for sample in training_samples:
-            agent = training_samples["agent_name"]
-            content    = training_samples["content"]
+            agent  = sample["agent_name"]
+            prompt = sample["prompt"]
             if agent not in samples:
-                samples[agent] = [content]
+                samples[agent] = [prompt]
             else:
-                samples[agent].append(content)
+                samples[agent].append(prompt)
 
         self.embeddings = {}
         for agent in samples:

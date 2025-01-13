@@ -36,6 +36,7 @@ class PromptPool:
         model: Any,
         per_agent: int,
         batch_size: Optional[int],
+        store_context: Optional[int],
         progress: bool = False,
     ):
         """
@@ -60,7 +61,10 @@ class PromptPool:
             raise ValueError("A list of agents must be specified first")
 
         per_agent = per_agent if per_agent is not None else total // len(self.agents)
-        generator = Generator(model, self.agents) if batch_size is None else Generator(model, self.agents, batch_size=batch_size)
+        generator = Generator(model,
+                              self.agents,
+                              batch_size=batch_size,
+                              store_context=store_context)
 
         for agent in self.agents:
             name      = agent.name

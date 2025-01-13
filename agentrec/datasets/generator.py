@@ -4,7 +4,7 @@ import jsonlines
 from typing import Any, Optional
 
 BATCH_SIZE = 50
-CONTEXT_SIZE = 50
+CONTEXT_SIZE = 0
 SYSTEM_PROMPT = """
 You are a synthetic dataset generator specializing in creating diverse and \
 realistic prompts for Large Language Models (LLMs). Your task is to generate \
@@ -43,7 +43,10 @@ class Generator:
                     Defaults to `50`.
         store_context: Determines whether each LLM batch call should contain
                        the context generated from the previous LLM batch calls.
-                       Defaults to `True`.
+                       If `store_context` is not `0`, then this will decide the
+                       number of messages to send to the LLM. This is defaulted
+                       to `0` as it was found that context may cause duplicates,
+                       but your mileage may vary.
     """
     def __init__(
         self,
@@ -121,15 +124,15 @@ class AgentGenerator:
         agent: str,
         agent_desc: Optional[str] = None,
         agent_examples: list[str | dict] = [],
-        batch_size: int = BATCH_SIZE,
-        store_context: int = CONTEXT_SIZE,
+        batch_size: Optional[int] = BATCH_SIZE,
+        store_context: Optional[int] = CONTEXT_SIZE,
     ):
         self.model = model
         self.agent = agent
         self.agent_desc = agent_desc
         self.agent_examples = []
-        self.batch_size = batch_size
-        self.store_context = store_context
+        self.batch_size = batch_size if batch_size is not None else BATCH_SIZE
+        self.store_context = store_context if store_context is not None else CONTEXT_SIZE
 
         for example in agent_examples:
             if isinstance(example, str):
@@ -178,9 +181,9 @@ class AgentGenerator:
 
             agent_data += examples
 
-        system_prompt = SYSTEM_PROMPT + agent_data
         instruction = f"Generate {self.batch_size} prompts for the given agent. \
                         Do not output anything else other than valid JSON."
+        system_prompt = SYSTEM_PROMPT + agent_data + instruction
         user_prompt = [{"role": "user", "content": instruction}]
         model_context = [{"role": "system", "content": system_prompt}] + \
                         self.context + \

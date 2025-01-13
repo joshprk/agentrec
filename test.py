@@ -18,7 +18,7 @@ AGENTS = [
     Agent("Fitness Agent"),
 ]
 
-DEVICE = "auto"
+DEVICE = "cuda:7"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.6
 TOP_P = 0.95
@@ -61,14 +61,20 @@ class Llama3:
 def main():
     model = Llama3()
     pool  = PromptPool()
+
     pool.set(AGENTS)
-    pool.generate(model, per_agent=200, batch_size=50, progress=True)
+    pool.generate(model,
+                  per_agent=200,
+                  batch_size=50,
+                  store_context=0,
+                  progress=True)
 
     pool.save(path="./data/prompts.jsonl",
               agent_path="./data/agents.jsonl")
 
 def main2():
     pool = PromptPool()
+
     pool.load(path="./data/prompts.jsonl",
               agent_path="./data/agents.jsonl")
 

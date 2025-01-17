@@ -39,7 +39,7 @@ recommendation:
 - **Adaptive.** Theoretically, removing or adding agents does not change the
 classification of the existing ones as the prompt encodings are still
 calculated in the same way. You will not need to re-train from scratch if you
-add a new agent. Furthermore, there are emerging properties that allow some
+add a new agent. Furthermore, there are emergent properties that allow some
 correct classification of agents that were not necessary trained with to begin
 with.
 - **Fast.** SBERT is a Siamese architecture which encodes the prompts before
@@ -50,3 +50,6 @@ prompt generally takes less than 0.01 milliseconds.
 which cluster together as near neighbors. The embeddings themselves can be
 interpreted as encoding semantic characteristics which are relevant to
 recommending an agent.
+- **Controllable.** Using reinforcement learning techniques such as RLHF, it is
+possible to set specific metrics for the recommender to align to, such as human
+values.

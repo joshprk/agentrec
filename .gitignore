@@ -1,6 +1,6 @@
 **/__pycache__/
 tmp_trainer/
-finetuned_model/
+models/
 
 venv/
 .env

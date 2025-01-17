@@ -35,7 +35,6 @@ def main():
     loss = BatchAllTripletLoss(model.model)
     args = SentenceTransformerTrainingArguments(
         output_dir="./models/test_model",
-        bf16=True,
         learning_rate=2e-5,
         warmup_ratio=0.1,
         num_train_epochs=8,

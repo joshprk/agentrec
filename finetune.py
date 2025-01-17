@@ -34,6 +34,7 @@ def main():
     model = SBERTAgentRec("all-mpnet-base-v2")
     loss = BatchAllTripletLoss(model.model)
     args = SentenceTransformerTrainingArguments(
+        output_dir="./models/test_model",
         bf16=True,
         learning_rate=2e-5,
         warmup_ratio=0.1,
@@ -48,7 +49,7 @@ def main():
     )
 
     trainer.train()
-    trainer.save_model("./finetuned_model")
+    trainer.save_model()
 
 if __name__ == "__main__":
     main()

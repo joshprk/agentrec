@@ -32,7 +32,7 @@ it is possible to try out the agent recommendation system by using `test.py`.
 
 Traditional classification methods must be re-trained if more classes, or
 agents, are added or removed over time. Furthermore, other classification
-methods can be extremely slow. This method solves these problems, and more.
+methods can be extremely slow. This method solves these problems and more.
 Below are some of the benefits of using this implementation of agent
 recommendation:
 

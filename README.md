@@ -51,5 +51,5 @@ which cluster together as near neighbors. The embeddings themselves can be
 interpreted as encoding semantic characteristics which are relevant to
 recommending an agent.
 - **Controllable.** Using reinforcement learning techniques such as RLHF, it is
-possible to set specific metrics for the recommender to align to, such as human
+possible to set specific metrics for the recommender to align to such as human
 values.

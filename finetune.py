@@ -6,10 +6,14 @@ from sentence_transformers.losses import BatchAllTripletLoss
 
 AGENT_FILE = "./data/agents.jsonl"
 PROMPT_FILE = "./data/prompts.jsonl"
+OUTPUT_DIR = "./models/test_model/"
+BASE_MODEL_ID = "all-mpnet-base-v2"
+SHUFFLE_SEED = 42
 
 def main():
     pool = PromptPool()
     pool.load(PROMPT_FILE, AGENT_FILE)
+    pool.shuffle(SHUFFLE_SEED)
 
     label_map = []
 
@@ -31,10 +35,10 @@ def main():
         data["label"].append(label)
 
     train_dataset = Dataset.from_dict(data)
-    model = SBERTAgentRec("all-mpnet-base-v2")
+    model = SBERTAgentRec(BASE_MODEL_ID)
     loss = BatchAllTripletLoss(model.model)
     args = SentenceTransformerTrainingArguments(
-        output_dir="./models/test_model",
+        output_dir=OUTPUT_DIR,
         learning_rate=2e-5,
         warmup_ratio=0.1,
         num_train_epochs=8,

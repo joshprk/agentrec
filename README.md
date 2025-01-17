@@ -24,3 +24,6 @@ class. A list of agent names must be given, which can have optional
 descriptions and examples tied to them. This dataset can then be saved through
 serializing the `PromptPool`. A usage example is given in `test.py`. Note that
 a Huggingface API key must be inserted in `.env`.
+
+Afterwards, one can finetune the model by using `finetune.py`. After finetuning,
+it is possible to try out the agent reocmmendation system by using `test.py`.

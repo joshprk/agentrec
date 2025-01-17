@@ -22,7 +22,7 @@ class SBERTAgentRec:
         for agent in samples:
             self.embeddings[agent] = self.model.encode(samples[agent])
 
-    def transform(self, prompt):
+    def transform(self, prompt: str):
         embedded_prompt = self.model.encode(prompt)
         similarities = {}
 

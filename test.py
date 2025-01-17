@@ -78,7 +78,8 @@ def main2():
     pool.load(path="./data/prompts.jsonl",
               agent_path="./data/agents.jsonl")
 
-    classifier = SBERTAgentRec("all-mpnet-base-v2")
+    classifier = SBERTAgentRec("./finetuned_model")
+    #classifier = SBERTAgentRec("all-mpnet-base-v2")
     classifier.fit(pool.pool)
     
     while stdin := input("> "):

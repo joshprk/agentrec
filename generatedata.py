@@ -15,7 +15,7 @@ AGENTS = [
     Agent("Fitness Agent"),
 ]
 
-DEVICE = "cuda:7"
+DEVICE = "cuda:6"
 MAX_NEW_TOKENS = 1024
 TEMPERATURE = 0.6
 TOP_P = 0.95

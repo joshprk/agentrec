@@ -40,8 +40,10 @@ def main():
     args = SentenceTransformerTrainingArguments(
         output_dir=OUTPUT_DIR,
         learning_rate=2e-5,
+        per_device_eval_batch_size=16,
+        per_device_train_batch_size=16,
         warmup_ratio=0.1,
-        num_train_epochs=8,
+        num_train_epochs=1,
     )
 
     trainer = SentenceTransformerTrainer(

@@ -2,13 +2,38 @@ from dotenv import load_dotenv
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 
 from agentrec.datasets import PromptPool
 from agentrec.models import SBERTAgentRec
 
 import math
+
+def embed_pca(x, dim=2):
+    scaler = StandardScaler()
+    pca    = PCA(n_components=dim)
+
+    scaler.fit(x)
+    x = scaler.transform(x)
+
+    pca.fit(x)
+    return pca.transform(x)
+
+def separate(embeddings):
+    x = []
+    y = []
+    label_map = []
+
+    for agent in embeddings:
+        if agent not in label_map:
+            label_map.append(agent)
+
+        for prompt in embeddings[agent]:
+            x.append(prompt)
+            y.append(label_map.index(agent))
+
+    return np.array(x), np.array(y), label_map
 
 def main():
     pool = PromptPool()
@@ -17,44 +42,28 @@ def main():
               agent_path="./data/agents.jsonl")
 
     classifier = SBERTAgentRec("./models/test_model/")
-    #Aclassifier = SBERTAgentRec("all-mpnet-base-v2")
+    #classifier = SBERTAgentRec("all-mpnet-base-v2")
     classifier.fit(pool.pool)
 
     embeddings = classifier.embeddings
-    visual_embeddings = {}
+    x, y, label_map = separate(embeddings)
 
-    for agent in embeddings:
-        corpus = embeddings[agent]
-        scaler = StandardScaler()
-        pca    = PCA(n_components=3)
-
-        scaler.fit(corpus)
-        corpus = scaler.transform(corpus)
-
-        pca.fit(corpus)
-        visual_embeddings[agent] = pca.transform(corpus)
-
-    X = []
-    Y = []
-    label_map = []
-
-    for y in visual_embeddings:
-        if y not in label_map:
-            label_map.append(y)
-
-        for x in visual_embeddings[agent]:
-            X.append(x)
-            Y.append(label_map.index(y))
+    x3d = embed_pca(x, dim=3)
 
     fig  = plt.figure()
     axis = fig.add_subplot(111, projection="3d")
 
-    X = np.array(X)
-    Y = np.array(Y)
-
-    axis.scatter(X[:,0], X[:,1], X[:,2], c=Y, cmap="plasma")
+    axis.scatter(x3d[:,0], x3d[:,1], x3d[:,2], c=y, cmap="plasma")
     fig.show()
-    fig.savefig("final.png")
+    fig.savefig("test3d.png")
+    plt.clf()
+
+    x2d = embed_pca(x, dim=2)
+
+    pc1, pc2 = zip(*x2d)
+    plt.scatter(pc1, pc2, s=2, c=y, cmap="plasma")
+    plt.show()
+    plt.savefig("test2d.png")
 
 if __name__ == "__main__":
     load_dotenv()

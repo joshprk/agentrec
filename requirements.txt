@@ -1,7 +1,8 @@
 accelerate
 datasets
+jsonlines
+matplotlib
 python-dotenv
 sentence_transformers
 torch
 transformers
-jsonlines

@@ -4,6 +4,7 @@ from agentrec.datasets import Agent, Generator
 
 from typing import Any, Optional
 from pathlib import Path
+import copy
 import random
 
 class PromptPool:
@@ -18,6 +19,9 @@ class PromptPool:
     def __init__(self):
         self.pool = []
         self.agents = []
+
+    def __len__(self):
+        return len(self.pool)
 
     def set(self, agents: list[Agent]):
         """
@@ -147,8 +151,8 @@ class PromptPool:
     ):
         """
         Serializes and saves the PromptPool such that it can be loaded into
-        memory later. This requires the saving of two files, one to store
-        the agent metadata at `agent_path` and another to store the prompts
+        memory later. This requires the saving of two files, one to store the
+        agent metadata at `agent_path` and another to store the prompts
         themselves at `path`. It is suggested that these files are stored
         together in the same directory.
 
@@ -167,6 +171,40 @@ class PromptPool:
         with jsonlines.open(path, mode="w") as prompt_file:
             prompt_file.write_all(self.pool)
             prompt_file.close()
+
+    def save_split(
+        self,
+        train_path: str,
+        test_path: str,
+        test_split: float = 0.2,
+    ):
+        """
+        Saves a train and test split which are uniformly split. It is
+        recommended to use the `save` method alongside this method, as it is
+        not possible to load a `PromptPool` from split files.
+
+        Args:
+            train_path: The file path where the train split is stored
+            test_path: The file path where the test split is stored
+            test_split: The percentage of all samples in the pool which are
+                        allocated to the test split. Defaults to 20%.
+        """
+        train_pool = copy.deepcopy(self)
+        test_pool = train_pool.uniform(int(len(train_pool) * test_split))
+
+        Path(train_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(test_path).parent.mkdir(parents=True, exist_ok=True)
+
+        with jsonlines.open(train_path, mode="w") as train_file:
+            train_file.write_all(train_pool.pool)
+            train_file.close()
+
+        with jsonlines.open(test_path, mode="w") as test_file:
+            test_file.write_all(test_pool.pool)
+            test_file.close()
+
+        del train_pool
+        del test_pool
 
     def load(
         self,

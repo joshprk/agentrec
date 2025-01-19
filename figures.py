@@ -16,7 +16,8 @@ def main():
     pool.load(path="./data/prompts.jsonl",
               agent_path="./data/agents.jsonl")
 
-    classifier = SBERTAgentRec("all-mpnet-base-v2")
+    classifier = SBERTAgentRec("./models/test_model/")
+    #Aclassifier = SBERTAgentRec("all-mpnet-base-v2")
     classifier.fit(pool.pool)
 
     embeddings = classifier.embeddings
@@ -53,7 +54,7 @@ def main():
 
     axis.scatter(X[:,0], X[:,1], X[:,2], c=Y, cmap="plasma")
     fig.show()
-    fig.savefig("initial.png")
+    fig.savefig("final.png")
 
 if __name__ == "__main__":
     load_dotenv()

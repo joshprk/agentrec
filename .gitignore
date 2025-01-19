@@ -1,6 +1,7 @@
 **/__pycache__/
 tmp_trainer/
 models/
+*.png
 
 venv/
 .env

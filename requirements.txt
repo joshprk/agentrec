@@ -3,6 +3,7 @@ datasets
 jsonlines
 matplotlib
 python-dotenv
+scikit-learn
 sentence_transformers
 torch
 transformers

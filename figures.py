@@ -53,6 +53,7 @@ def main():
 
     axis.scatter(X[:,0], X[:,1], X[:,2], c=Y, cmap="plasma")
     fig.show()
+    fig.savefig("initial.png")
 
 if __name__ == "__main__":
     load_dotenv()

@@ -6,6 +6,9 @@ from agentrec.models import SBERTAgentRec
 
 import math
 
+OUTPUT_ALGO = "pmean"
+PMEAN = 2
+
 def main():
     pool = PromptPool()
     pool.load(path="./data/train.jsonl",
@@ -28,9 +31,18 @@ def main():
         raw = classifier.transform(prompt)
         scores = {}
 
-        for agent in raw:
-            scores[agent] = sum(raw[agent]) / len(raw[agent])
+        match OUTPUT_ALGO:
+            case "arithmetic_mean":
+                for agent in raw:
+                    scores[agent] = sum(raw[agent]) / len(raw[agent])
+            case "pmean":
+                for agent in raw:
+                    score_total = 0
+                    for score in raw[agent]:
+                        score_total += score ** PMEAN
 
+                    score_total /= len(raw[agent])
+                    scores[agent] = score_total ** (1 / PMEAN)
         best = ""
         best_score = -math.inf
 

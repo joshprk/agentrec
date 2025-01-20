@@ -128,7 +128,7 @@ class PromptPool:
         per_agent = n // len(self.agents)
         prompts = {}
         for agent in self.agents:
-            name = agent.name
+            name = agent["name"]
             prompts[name] = []
             idx = 0
             while (len(prompts[name]) < per_agent) and (idx < len(self.pool)):
@@ -200,7 +200,7 @@ class PromptPool:
             train_file.close()
 
         with jsonlines.open(test_path, mode="w") as test_file:
-            test_file.write_all(test_pool.pool)
+            test_file.write_all(test_pool)
             test_file.close()
 
         del train_pool

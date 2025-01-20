@@ -15,6 +15,14 @@ def main():
     pool.load(PROMPT_FILE, AGENT_FILE)
     pool.shuffle(SHUFFLE_SEED)
 
+    pool.save_split(
+        train_path="./data/train.jsonl",
+        test_path="./data/test.jsonl",
+    )
+
+    pool = PromptPool()
+    pool.load("./data/train.jsonl", AGENT_FILE)
+
     label_map = []
 
     data = {

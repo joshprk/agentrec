@@ -53,3 +53,9 @@ recommending an agent.
 - **Controllable.** Using reinforcement learning techniques such as RLHF, it is
 possible to set specific metrics for the recommender to align to such as human
 values.
+
+@article{park2025agentrec,
+  title={AgentRec: Agent Recommendation Using Sentence Embeddings Aligned to Human Feedback},
+  author={Park, Joshua and Zhang, Yongfeng}
+  year={2025}
+}

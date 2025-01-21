@@ -7,7 +7,7 @@ from agentrec.models import SBERTAgentRec
 
 import math
 
-OUTPUT_ALGO = "pmean"
+OUTPUT_ALGO = "log_pmean"
 PMEAN = 200
 
 def main():
@@ -71,6 +71,15 @@ def main():
                             if max_score < score:
                                 score = max_score
                         scores[agent] = score
+                case "log_pmean":
+                    for agent in raw:
+                        score_total = 0
+                        for score in raw[agent]:
+                            score_total += score ** PMEAN
+
+                        score_total = np.log(score_total)
+                        score_total -= np.log(len(raw[agent]))
+                        scores[agent] = score_total * (1 / PMEAN)
                 case _:
                     raise RuntimeError("Invalid mean type")
 

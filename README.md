@@ -54,8 +54,14 @@ recommending an agent.
 possible to set specific metrics for the recommender to align to such as human
 values.
 
+## References
+
+If you find this repository helpful, please feel free to cite our work.
+
+```
 @article{park2025agentrec,
   title={AgentRec: Agent Recommendation Using Sentence Embeddings Aligned to Human Feedback},
   author={Park, Joshua and Zhang, Yongfeng}
   year={2025}
 }
+```

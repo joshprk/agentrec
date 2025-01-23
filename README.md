@@ -5,7 +5,7 @@ recommendation in multiagent systems. It contains functions for training,
 testing, and evaluating robust agent recommendation systems. Unlike traditional
 classification techniques, it is adaptive to new classes as the computation of
 prior embeddings need not change. In the original paper, this library was able to
-produce a model with a top-1 accuracy of 92.2% with a below 300 ms evaluation time.
+produce a model with a top-1 accuracy of 92.2% with a >=300 ms evaluation time.
 
 ## Implementation
 

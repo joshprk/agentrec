@@ -1,9 +1,24 @@
-# Agent Recommendation
+# AgentRec
 
-This repository contains code that assists with the synthetic generation of
-a prompt dataset labeled with the appropriate AI agent that would handle it,
-as well as a method to recommend the use of a specific agent when a new prompt
-is given through the use of human-aligned latent space embeddings.
+AgentRec is a library for building small end-to-end models for agent
+recommendation in multiagent systems. It contains functions for training,
+testing, and evaluating robust agent recommendation systems. Unlike traditional
+classification techniques, it is adaptive to new classes as the computation of
+prior embeddings need not change. In the original paper, this library was able to
+produce a model with a top-1 accuracy of 92.2% with a below 300 ms evaluation time.
+
+## Implementation
+
+To recommend an agent, it is important to find a knowledge representation that
+allows us to compare and contrast the capabilities of LLM agents numerically.
+Our research found that we can achieve this by encoding agent capabilities as
+a corpus of many single-sentence user prompts which we know that a given LLM
+agent can answer.
+
+Afterwards, an unseen prompt is evaluated by comparing it to the many prompts
+already labeled in the agent capabilities corpora. A score function which
+produces a rank out of hundreds of comparisons then generates the top-k agent
+recommendations.
 
 ## Usage
 
@@ -27,32 +42,6 @@ Note that a Huggingface API key must be inserted in `.env`.
 
 Afterwards, one can finetune the model by using `finetune.py`. After finetuning,
 it is possible to try out the agent recommendation system by using `test.py`.
-
-## Advantages
-
-Traditional classification methods must be re-trained if more classes, or
-agents, are added or removed over time. Furthermore, other classification
-methods can be extremely slow. This method solves these problems and more.
-Below are some of the benefits of using this implementation of agent
-recommendation:
-
-- **Adaptive.** Theoretically, removing or adding agents does not change the
-classification of the existing ones as the prompt encodings are still
-calculated in the same way. You will not need to re-train from scratch if you
-add a new agent. Furthermore, there are emergent properties that allow some
-correct classification of agents that were not necessary trained with to begin
-with.
-- **Fast.** SBERT is a Siamese architecture which encodes the prompts before
-comparison. Even if you do not cache the embeddings, a set of 1,000 prompts can
-take only 5 seconds to fully encode into embeddings. Classifying a single
-prompt generally takes less than 0.01 milliseconds.
-- **Interpretable.** Prompts that belong to the same agent have embeddings
-which cluster together as near neighbors. The embeddings themselves can be
-interpreted as encoding semantic characteristics which are relevant to
-recommending an agent.
-- **Controllable.** Using reinforcement learning techniques such as RLHF, it is
-possible to set specific metrics for the recommender to align to such as human
-values.
 
 ## References
 

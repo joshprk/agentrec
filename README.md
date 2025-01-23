@@ -44,6 +44,7 @@ Note that a Huggingface API key must be inserted in `.env`.
 
 Afterwards, one can finetune the model by using `finetune.py`. After finetuning,
 it is possible to try out the agent recommendation system by using `test.py`.
+Otherwise, pre-trained model weights are available in the releases.
 
 ## References
 

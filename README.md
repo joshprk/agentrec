@@ -33,7 +33,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-A LLM is also necessary, which must allow the input and output of an OpenAI
+A LLM is also necessary, which must produce the input and output of an OpenAI
 formatted context. More details about implementing this are in the documentation.
 
 A synthetic dataset can be generated using the `agentrec.datasets.PromptPool`

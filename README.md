@@ -20,6 +20,8 @@ already labeled in the agent capabilities corpora. A score function which
 produces a rank out of hundreds of comparisons then generates the top-k agent
 recommendations.
 
+![A picture of the architecture](./figures/architecture.png)
+
 ## Usage
 
 It is important to first install the dependencies. This repository was written

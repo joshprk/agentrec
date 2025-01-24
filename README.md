@@ -51,9 +51,13 @@ Otherwise, pre-trained model weights are available in the releases.
 If you find this repository helpful, please feel free to cite our work.
 
 ```
-@article{park2025agentrec,
-  title={AgentRec: Agent Recommendation Using Sentence Embeddings Aligned to Human Feedback},
-  author={Park, Joshua and Zhang, Yongfeng}
-  year={2025}
+@misc{park2025agentrecagentrecommendationusing,
+  title={AgentRec: Agent Recommendation Using Sentence Embeddings Aligned to Human Feedback}, 
+  author={Joshua Park and Yongfeng Zhang},
+  year={2025},
+  eprint={2501.13333},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  url={https://arxiv.org/abs/2501.13333}, 
 }
 ```

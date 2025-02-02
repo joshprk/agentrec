@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer
 
 import math
 
-class AgentRec:
+class SBERTAgentRec:
     def __init__(self, model_name: str):
         self.model = SentenceTransformer(model_name)
         self.embeddings = {}
